@@ -2,16 +2,16 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <nav style={{display: "flex", justifyContent: "space-between", padding: "20px"}}>
-      
-      <h2>UVGuard</h2>
+    <nav className="navbar">
+      <div className="brand">UVGuard</div>
 
-      <div style={{display: "flex", gap: "20px"}}>
+      <div className="nav-links">
         <Link to="/">Home</Link>
         <Link to="/uv-check">UV Check</Link>
         <Link to="/uv-awareness">UV Awareness</Link>
+        <Link to="/protection-tips">Protection Tips</Link>
+        <Link to="/about">About</Link>
       </div>
-
     </nav>
   );
 }
