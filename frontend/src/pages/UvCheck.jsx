@@ -1,5 +1,39 @@
+import { useEffect, useState } from "react";
+
 function UVCheck() {
-  const uvIndex = 8;
+  const [locationName, setLocationName] = useState("Checking your location...");
+  const [uvIndex, setUvIndex] = useState(8);
+  const [status, setStatus] = useState("Very High");
+  const [warning, setWarning] = useState(
+    "UV is very high. Seek shade, wear sunscreen, and limit sun exposure."
+  );
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocationName("Location not supported on this device");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(2);
+        const lng = position.coords.longitude.toFixed(2);
+        setLocationName(`Current location: ${lat}, ${lng}`);
+
+        // Temporary mock value for now.
+        // Replace this later with your real UV API response.
+        const mockUv = 8;
+        setUvIndex(mockUv);
+
+        const level = getUVLevel(mockUv);
+        setStatus(level);
+        setWarning(getWarning(mockUv));
+      },
+      () => {
+        setLocationName("Location access denied");
+      }
+    );
+  }, []);
 
   function getUVLevel(uv) {
     if (uv <= 2) return "Low";
@@ -17,7 +51,7 @@ function UVCheck() {
       return "UV is moderate. Sunscreen and sunglasses are recommended if you are outdoors.";
     }
     if (uv <= 7) {
-      return "UV is high. Protection is required during the middle of the day.";
+      return "UV is high. Protection is needed around the middle of the day.";
     }
     if (uv <= 10) {
       return "UV is very high. Seek shade, wear sunscreen, and limit sun exposure.";
@@ -30,6 +64,7 @@ function UVCheck() {
       <section className="page-intro">
         <h1>UV Check</h1>
         <p>Real-time UV alerts for your location</p>
+        <p className="location-text">{locationName}</p>
       </section>
 
       <section className="info-card uv-summary-card">
@@ -37,8 +72,8 @@ function UVCheck() {
 
         <div className="uv-summary-text">
           <p className="small-label">Current UV Index</p>
-          <h2>{getUVLevel(uvIndex)}</h2>
-          <p>{getWarning(uvIndex)}</p>
+          <h2>{status}</h2>
+          <p>{warning}</p>
         </div>
       </section>
 
