@@ -1,0 +1,41 @@
+/* 1. 統一盒模型：防止 padding 撐開寬度導致兩頁大小不一 */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 2. 確保最外層容器不會變成並排 */
+body, #root {
+  display: block; /* 確保不是 flex，或是設為 column */
+  width: 100%;
+  margin: 0;
+}
+
+/* 3. 讓導航欄和頁面內容共用的容器樣式 */
+.navbar-container, 
+.main-content {
+  width: 100%;        /* 重點：強制填滿可用空間，直到達到 max-width */
+  max-width: 1100px;  
+  margin: 0 auto;     /* 居中 */
+  padding: 0 20px;    
+}
+
+/* 4. 導航欄本身的樣式 */
+.navbar {
+  width: 100%;
+  background-color: white;
+  border-bottom: 1px solid #dbe5f0;
+  /* 確保導航欄永遠橫跨整個螢幕 */
+  display: block; 
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+}
+
+/* 5. 額外保險：確保內容區塊不會被 Flex 壓縮 */
+.main-content {
+  flex-shrink: 0; 
+}

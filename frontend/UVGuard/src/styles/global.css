@@ -1,0 +1,21 @@
+/* 讓導航欄和頁面內容共用的容器樣式 */
+.navbar-container, 
+.main-content {
+  max-width: 1100px;  /* 跟你原本設定的一樣 */
+  margin: 0 auto;     /* 居中 */
+  padding: 0 20px;    /* 左右留白，防止手機版貼邊 */
+}
+
+/* 導航欄本身的樣式 */
+.navbar {
+  width: 100%;
+  background-color: white;
+  border-bottom: 1px solid #dbe5f0;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px; /* 根據你的需求調整 */
+}

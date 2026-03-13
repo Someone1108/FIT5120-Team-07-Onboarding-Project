@@ -1,28 +1,39 @@
+import "../styles/UVAwareness.css";
+import React from "react";
+import { Link } from "react-router-dom";
+
 function UVAwareness() {
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>UV Awareness</h1>
+    <div className="uv-awareness-page">
 
-      <p>
-        Australia has one of the highest skin cancer rates in the world.
-        Exposure to high UV radiation can cause skin cancer and premature aging.
-      </p>
+      <main className="main-content">
 
-      <h2>Skin Cancer Facts</h2>
+        {/* Page Header */}
+        <div className="page-header">
+          <h1>UV Awareness</h1>
+          <p>Understanding UV trends and skin cancer impact</p>
+        </div>
 
-      <ul>
-        <li>2 in 3 Australians will be diagnosed with skin cancer by age 70.</li>
-        <li>More than 2000 Australians die from skin cancer every year.</li>
-        <li>UV radiation is the main cause of skin cancer.</li>
-      </ul>
+        {/* UV Trend Chart Section */}
+        <div className="chart-card">
+          <h3>UV Index & Temperature Trends (2015-2025)</h3>
 
-      <h2>How to Protect Yourself</h2>
+          <div className="chart-placeholder">
+            Chart will be rendered here
+          </div>
+        </div>
 
-      <ul>
-        <li>Wear sunscreen SPF 30+</li>
-        <li>Wear sunglasses and a hat</li>
-        <li>Avoid the sun during peak UV hours</li>
-      </ul>
+        {/* Skin Cancer Chart Section */}
+        <div className="chart-card">
+          <h3>Skin Cancer Incidence & Mortality (per 100,000)</h3>
+
+          <div className="chart-placeholder">
+            Chart will be rendered here
+          </div>
+        </div>
+
+      </main>
+
     </div>
   );
 }
