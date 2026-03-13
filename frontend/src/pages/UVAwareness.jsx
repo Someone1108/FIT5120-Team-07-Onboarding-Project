@@ -1,18 +1,4 @@
 import { useState } from "react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ReferenceArea
-} from "recharts";
-import { skinCancerImpactData, uvTrendData } from "../data/chartData";
 import skinToneData from "../data/skinToneData";
 
 function UVAwareness() {
@@ -40,86 +26,111 @@ function UVAwareness() {
       <section className="chart-card">
         <h3>Skin Cancer Impact in Australia</h3>
         <p className="chart-note">
-          This chart compares annual skin cancer incidence and deaths.
+          This chart area will display the final visualisation once the dataset
+          is added by the team.
         </p>
-        <div className="real-chart">
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={skinCancerImpactData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2c3153" />
-              <XAxis dataKey="year" stroke="#d8cdbd" />
-              <YAxis stroke="#d8cdbd" />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="incidence" fill="#ffb347" name="Incidence" />
-              <Bar dataKey="deaths" fill="#ff6b6b" name="Deaths" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <div className="chart-placeholder">Skin cancer chart placeholder</div>
       </section>
 
       <section className="chart-card">
         <h3>Australian UV or Heat Trends Over Time</h3>
         <p className="chart-note">
-          This line graph shows how UV and heat levels change through the year.
-          Harmful UV periods are where the UV index rises above safer levels.
+          This section will show a line graph highlighting harmful UV periods.
         </p>
-        <div className="real-chart">
-          <ResponsiveContainer width="100%" height={320}>
-            <LineChart data={uvTrendData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2c3153" />
-              <XAxis dataKey="month" stroke="#d8cdbd" />
-              <YAxis stroke="#d8cdbd" />
-              <Tooltip />
-              <Legend />
-              <ReferenceArea x1="Jan" x2="Mar" fill="#ff9f43" fillOpacity={0.08} />
-              <ReferenceArea x1="Sep" x2="Dec" fill="#ff9f43" fillOpacity={0.08} />
-              <Line
-                type="monotone"
-                dataKey="uv"
-                stroke="#ffb347"
-                strokeWidth={3}
-                name="UV Index"
-              />
-              <Line
-                type="monotone"
-                dataKey="heat"
-                stroke="#7cc6fe"
-                strokeWidth={3}
-                name="Average Heat"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="chart-placeholder">UV trend line graph placeholder</div>
+      </section>
+
+      <section className="info-card skin-awareness-section">
+        <div className="skin-awareness-header">
+          <h3>Skin Colour Customisation</h3>
+          <p>
+            Select the skin tone that best matches yours to see how UV
+            sensitivity and protection guidance may differ.
+          </p>
+        </div>
+
+        <div className="skin-awareness-layout">
+          <div className="skin-selector-panel">
+            <h4>Select Your Skin Type</h4>
+            <p className="selector-subtext">
+              Click on the skin tone that best matches yours
+            </p>
+
+            <div className="skin-types-grid">
+              {skinToneData.map((tone) => (
+                <button
+                  key={tone.id}
+                  className={`skin-type-btn ${
+                    selectedTone?.id === tone.id ? "skin-type-btn-active" : ""
+                  }`}
+                  onClick={() => setSelectedTone(tone)}
+                >
+                  <div
+                    className="skin-color-circle"
+                    style={{ backgroundColor: tone.color }}
+                  ></div>
+                  <span className="skin-type-name">{tone.type}</span>
+                  <span className="skin-type-desc">{tone.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="skin-result-panel">
+            {!selectedTone ? (
+              <div className="skin-empty-state">
+                <div className="skin-empty-icon">☝️</div>
+                <h4>Select your skin type</h4>
+                <p>
+                  Click on a skin tone to see personalised UV absorption
+                  information and protection recommendations.
+                </p>
+              </div>
+            ) : (
+              <div className="skin-result-content">
+                <div className="skin-result-top">
+                  <div
+                    className="skin-result-circle"
+                    style={{ backgroundColor: selectedTone.color }}
+                  ></div>
+
+                  <div>
+                    <p className="result-type-label">{selectedTone.type}</p>
+                    <h4>{selectedTone.name}</h4>
+                    <span className="sensitivity-badge">
+                      {selectedTone.sensitivity}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="skin-result-card">
+                  <h5>UV Absorption Information</h5>
+                  <p>{selectedTone.absorption}</p>
+                </div>
+
+                <div className="skin-result-card">
+                  <h5>Relationship to UV Exposure Risk</h5>
+                  <p>{selectedTone.risk}</p>
+                </div>
+
+                <div className="skin-result-card">
+                  <h5>Recommended Sun Protection</h5>
+                  <p>{selectedTone.advice}</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
       <section className="info-card">
-        <h3>Skin Colour Customisation</h3>
-        <p>
-          Select a skin tone to see how UV sensitivity and protection advice may
-          vary.
-        </p>
-
-        <div className="skin-tone-grid">
-          {skinToneData.map((tone) => (
-            <button
-              key={tone.id}
-              className={`tone-card ${selectedTone?.id === tone.id ? "tone-card-active" : ""}`}
-              onClick={() => setSelectedTone(tone)}
-            >
-              <span className="tone-label">{tone.shortLabel}</span>
-              <strong>{tone.name}</strong>
-            </button>
-          ))}
-        </div>
-
-        {selectedTone && (
-          <div className="skin-tone-result">
-            <h4>{selectedTone.name}</h4>
-            <p><strong>Sensitivity:</strong> {selectedTone.sensitivity}</p>
-            <p><strong>UV absorption context:</strong> {selectedTone.absorption}</p>
-            <p><strong>Recommended protection:</strong> {selectedTone.advice}</p>
-          </div>
-        )}
+        <h3>Key takeaways</h3>
+        <ul className="tip-list">
+          <li>High UV can happen even on cooler days.</li>
+          <li>Cloud cover does not always mean low UV exposure.</li>
+          <li>Darker skin tones still need sun protection.</li>
+          <li>Regular protection helps reduce long-term skin damage.</li>
+        </ul>
       </section>
     </main>
   );
