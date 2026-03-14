@@ -34,3 +34,18 @@ a {
 ul {
   padding-left: 20px;
 }
+
+/* ===== Navbar Brand (logo + UVGuard) ===== */
+
+.brand {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.nav-logo {
+  height: 28px;
+  width: auto;
+  margin-right: 8px;
+}
