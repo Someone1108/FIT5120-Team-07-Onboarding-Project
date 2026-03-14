@@ -372,6 +372,111 @@ app.get("/api/locations", async (req, res) => {
   }
 });
 
+app.get("/api/cancer/incidence", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        year,
+        count,
+        age_group,
+        cancer_type,
+        population_group,
+        age_specific_rate_per_100000,
+        age_standardised_rate_2001_asp,
+        age_standardised_rate_2023_pop,
+        age_standardised_rate_who,
+        age_standardised_rate_segi
+      FROM cancer_incidence_melanoma_trend
+      ORDER BY year ASC
+    `);
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("GET /api/cancer/incidence error:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: error.message || "Something went wrong while fetching incidence data."
+    });
+  }
+});
+
+app.get("/api/cancer/mortality", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        year,
+        cancer_groupsite,
+        sex,
+        age_group_years,
+        count,
+        agespecific_rate_per_100000,
+        agestandardised_rate_2001_australian_standard_population_per_10,
+        icd10_codes
+      FROM cancer_mortality_cleaned
+      ORDER BY year ASC
+    `);
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("GET /api/cancer/mortality error:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: error.message || "Something went wrong while fetching mortality data."
+    });
+  }
+});
+
+app.get("/api/cancer/survival", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        year_range,
+        persons,
+        males,
+        females
+      FROM melanoma_survival_rates
+      ORDER BY year_range ASC
+    `);
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("GET /api/cancer/survival error:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: error.message || "Something went wrong while fetching survival data."
+    });
+  }
+});
+
+app.get("/api/uv/trend", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        record_date,
+        city,
+        daily_max_uv,
+        daily_avg_uv,
+        uv_level,
+        latitude,
+        longitude
+      FROM uv_data
+      ORDER BY record_date ASC
+    `);
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("GET /api/uv/trend error:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: error.message || "Something went wrong while fetching UV trend data."
+    });
+  }
+});
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
