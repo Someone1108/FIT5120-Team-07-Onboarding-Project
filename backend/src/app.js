@@ -353,6 +353,25 @@ app.get("/api/uv/current", async (req, res) => {
   }
 });
 
+app.get("/api/locations", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT location_id, suburb, state, postcode, latitude, longitude
+      FROM location
+      ORDER BY suburb ASC
+      LIMIT 100
+    `);
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("GET /api/locations error:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: error.message || "Something went wrong while fetching locations."
+    });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
