@@ -1,5 +1,19 @@
 import { useState } from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LineChart,
+  Line,
+  ReferenceLine,
+} from "recharts";
 import skinToneData from "../data/skinToneData";
+import { skinCancerImpactData, uvTrendData } from "../data/chartData";
 
 function UVAwareness() {
   const [selectedTone, setSelectedTone] = useState(null);
@@ -26,18 +40,91 @@ function UVAwareness() {
       <section className="chart-card">
         <h3>Skin Cancer Impact in Australia</h3>
         <p className="chart-note">
-          This chart area will display the final visualisation once the dataset
-          is added by the team.
+          This chart shows melanoma cases in Australia over time. Hover over
+          each bar to view the exact value.
         </p>
-        <div className="chart-placeholder">Skin cancer chart placeholder</div>
+
+        <div className="chart-wrapper">
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart
+              data={skinCancerImpactData}
+              margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="year"
+                label={{
+                  value: "Year",
+                  position: "insideBottom",
+                  offset: -10,
+                }}
+              />
+              <YAxis
+                label={{
+                  value: "Number of Cases",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip />
+              <Legend />
+              <Bar
+                dataKey="incidence"
+                name="Skin Cancer Cases"
+                fill="#f6b44b"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </section>
 
       <section className="chart-card">
-        <h3>Australian UV or Heat Trends Over Time</h3>
+        <h3>Australian UV Trends Over Time</h3>
         <p className="chart-note">
-          This section will show a line graph highlighting harmful UV periods.
+          This line graph highlights periods where UV exposure reaches harmful
+          levels (UV index 3 or above).
         </p>
-        <div className="chart-placeholder">UV trend line graph placeholder</div>
+
+        <div className="chart-wrapper">
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart
+              data={uvTrendData}
+              margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="month"
+                label={{
+                  value: "Date",
+                  position: "insideBottom",
+                  offset: -10,
+                }}
+              />
+              <YAxis
+                label={{
+                  value: "UV Index",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip />
+              <Legend />
+              <ReferenceLine
+                y={3}
+                stroke="#ff6b6b"
+                strokeDasharray="6 6"
+                label="Harmful level (UV 3+)"
+              />
+              <Line
+                type="monotone"
+                dataKey="uv"
+                name="UV Index"
+                stroke="#f6b44b"
+                strokeWidth={3}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </section>
 
       <section className="info-card skin-awareness-section">

@@ -5,11 +5,7 @@ import ErrorState from "../components/ErrorState";
 import ActionChecklist from "../components/ActionChecklist";
 import SeverityBadge from "../components/SeverityBadge";
 import { getCurrentUV, getLocations, getLocationByName } from "../services/api";
-import {
-  getUVSeverity,
-  getUVAdvice,
-  getUVActions
-} from "../utils/uvHelpers";
+import { getUVSeverity } from "../utils/uvHelpers";
 
 function Home() {
   const [loading, setLoading] = useState(false);
@@ -46,42 +42,25 @@ function Home() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
-          const lat = position.coords.latitude.toFixed(2);
-          const lng = position.coords.longitude.toFixed(2);
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
 
-          let response;
+          const response = await getCurrentUV(lat, lon);
 
-          try {
-            response = await getCurrentUV(lat, lng);
-          } catch {
-            // Temporary fallback if backend UV endpoint is still not ready.
-            response = {
-              uv_index: 8,
-              location: `Near ${lat}, ${lng}`,
-              updated_at: new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit"
-              })
-            };
-          }
-
-          const uvValue = Math.round(response.uv_index || 8);
-          const severity = getUVSeverity(uvValue);
+          const uvValue = Number(response.uv_index);
+          const severity = response.uv_level || getUVSeverity(uvValue);
 
           setUvResult({
             uvIndex: uvValue,
             level: severity,
-            location: response.location || `Near ${lat}, ${lng}`,
-            updatedAt:
-              response.updated_at ||
-              new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit"
-              }),
-            warning: getUVAdvice(uvValue),
-            actions: getUVActions(uvValue)
+            location: response.location || `Near ${lat}, ${lon}`,
+            updatedAt: response.updated_at || "",
+            warning: response.warning_message || "",
+            actions: response.actions || [],
+            temperature: response.temperature ?? null
           });
         } catch (err) {
+          console.error(err);
           setError("Could not fetch UV information for your location.");
         } finally {
           setLoading(false);
@@ -107,27 +86,13 @@ function Home() {
     try {
       const selectedLocation = await getLocationByName(manualLocation);
 
-      let response;
+      const response = await getCurrentUV(
+        selectedLocation.latitude,
+        selectedLocation.longitude
+      );
 
-      try {
-        response = await getCurrentUV(
-          selectedLocation.latitude,
-          selectedLocation.longitude
-        );
-      } catch {
-        // Temporary fallback until full backend route is ready.
-        response = {
-          uv_index: 7,
-          location: `${selectedLocation.suburb}, ${selectedLocation.state}`,
-          updated_at: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-          })
-        };
-      }
-
-      const uvValue = Math.round(response.uv_index || 7);
-      const severity = getUVSeverity(uvValue);
+      const uvValue = Number(response.uv_index);
+      const severity = response.uv_level || getUVSeverity(uvValue);
 
       setUvResult({
         uvIndex: uvValue,
@@ -135,16 +100,15 @@ function Home() {
         location:
           response.location ||
           `${selectedLocation.suburb}, ${selectedLocation.state}`,
-        updatedAt:
-          response.updated_at ||
-          new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-          }),
-        warning: getUVAdvice(uvValue),
-        actions: getUVActions(uvValue)
+        updatedAt: response.updated_at || "",
+        warning: response.warning_message || "",
+        actions: response.actions || [],
+        temperature: response.temperature ?? null
       });
+
+      setPermissionDenied(false);
     } catch (err) {
+      console.error(err);
       setError("Could not find that location. Please try another suburb.");
     } finally {
       setLoading(false);
@@ -198,6 +162,11 @@ function Home() {
               <SeverityBadge level={uvResult.level} />
               <p className="hero-side-text">{uvResult.warning}</p>
               <p className="small-label">Location: {uvResult.location}</p>
+              {uvResult.temperature !== null && (
+                <p className="small-label">
+                  Temperature: {uvResult.temperature}°C
+                </p>
+              )}
               <p className="small-label">Updated: {uvResult.updatedAt}</p>
             </>
           ) : (
@@ -260,6 +229,11 @@ function Home() {
               <h2>{uvResult.level}</h2>
               <p>{uvResult.warning}</p>
               <p className="small-label">Location: {uvResult.location}</p>
+              {uvResult.temperature !== null && (
+                <p className="small-label">
+                  Temperature: {uvResult.temperature}°C
+                </p>
+              )}
               <p className="small-label">Updated: {uvResult.updatedAt}</p>
             </div>
           </section>
