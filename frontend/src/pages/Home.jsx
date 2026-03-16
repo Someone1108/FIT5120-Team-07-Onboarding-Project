@@ -222,7 +222,7 @@ function Home() {
       {uvResult && !loading && (
         <>
           <section className="info-card uv-summary-card">
-            <div className="uv-circle">{uvResult.uvIndex}</div>
+            <div className="home-uv-circle">{uvResult.uvIndex}</div>
 
             <div className="uv-summary-text">
               <p className="small-label">Current UV Index</p>
