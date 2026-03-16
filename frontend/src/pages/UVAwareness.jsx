@@ -1,8 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LineChart,
+  Line,
+  ReferenceLine,
+} from "recharts";
 import skinToneData from "../data/skinToneData";
 
 function UVAwareness() {
   const [selectedTone, setSelectedTone] = useState(null);
+  const [skinCancerData, setSkinCancerData] = useState([]);
+  const [uvData, setUvData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const [cancerRes, uvRes] = await Promise.all([
+          fetch("https://fit5120-team-07-onboarding-project.onrender.com/api/cancer/incidence"),
+          fetch("https://fit5120-team-07-onboarding-project.onrender.com/api/uv/trend"),
+        ]);
+
+        if (!cancerRes.ok) throw new Error(`Cancer API error: ${cancerRes.status}`);
+        if (!uvRes.ok) throw new Error(`UV API error: ${uvRes.status}`);
+
+        const cancerJson = await cancerRes.json();
+        const uvJson = await uvRes.json();
+
+        const formattedCancerData = cancerJson.map((item) => ({
+          year: item.year,
+          count: Number(item.count),
+        }));
+
+        const formattedUvData = uvJson.map((item) => ({
+          date: new Date(item.record_date).toLocaleDateString("en-AU", {
+            day: "2-digit",
+            month: "short",
+          }),
+          uv: Number(item.daily_max_uv),
+          avgUv: Number(item.daily_avg_uv),
+          uvLevel: item.uv_level,
+        }));
+
+        setSkinCancerData(formattedCancerData);
+        setUvData(formattedUvData);
+      } catch (err) {
+        console.error("Error fetching API data:", err);
+        setError("Failed to load chart data from backend.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <main className="page">
@@ -26,18 +88,55 @@ function UVAwareness() {
       <section className="chart-card">
         <h3>Skin Cancer Impact in Australia</h3>
         <p className="chart-note">
-          This chart area will display the final visualisation once the dataset
-          is added by the team.
+          This chart shows melanoma cases in Australia over time. Hover over each bar to view the exact value.
         </p>
-        <div className="chart-placeholder">Skin cancer chart placeholder</div>
+        <div className="chart-wrapper">
+          {loading ? (
+            <div className="chart-placeholder">Loading chart...</div>
+          ) : error ? (
+            <div className="chart-placeholder" style={{ color: "red" }}>{error}</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={320}>
+              <BarChart data={skinCancerData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="year" label={{ value: "Year", position: "insideBottom", offset: -10 }} />
+                <YAxis label={{ value: "Cases", angle: -90, position: "insideLeft" }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="count" name="Skin Cancer Cases" fill="#f6b44b" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
       </section>
 
       <section className="chart-card">
-        <h3>Australian UV or Heat Trends Over Time</h3>
+        <h3>Australian UV Trends Over Time</h3>
         <p className="chart-note">
-          This section will show a line graph highlighting harmful UV periods.
+          This line graph highlights periods where UV exposure reaches harmful levels (UV index 3 or above).
         </p>
-        <div className="chart-placeholder">UV trend line graph placeholder</div>
+        <div className="chart-wrapper">
+          {loading ? (
+            <div className="chart-placeholder">Loading chart...</div>
+          ) : error ? (
+            <div className="chart-placeholder" style={{ color: "red" }}>{error}</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={uvData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" label={{ value: "Date", position: "insideBottom", offset: -10 }} />
+                <YAxis label={{ value: "UV Index", angle: -90, position: "insideLeft" }} />
+                <Tooltip 
+                  formatter={(value, name) => [value, name === "uv" ? "Daily Max UV" : name]} 
+                  labelFormatter={(label) => `Date: ${label}`} 
+                />
+                <Legend />
+                <ReferenceLine y={3} stroke="#ff6b6b" strokeDasharray="6 6" label="Harmful level (UV 3+)" />
+                <Line type="monotone" dataKey="uv" name="Daily Max UV" stroke="#f6b44b" strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </div>
       </section>
 
       <section className="info-card skin-awareness-section">
