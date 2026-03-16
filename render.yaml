@@ -1,0 +1,48 @@
+# Render Blueprint 配置文件
+# 文档: https://render.com/docs/blueprint-spec
+
+databases:
+  - name: uv-database
+    plan: free
+    databaseName: uv_db
+    user: uv_user
+
+services:
+  # 后端 Web Service
+  - type: web
+    name: uv-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/uv/current?lat=-37.8136&lon=144.9631
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENWEATHER_API_KEY
+        sync: false  # 需要在 Render 控制台手动设置
+      - key: DATABASE_URL
+        fromDatabase:
+          name: uv-database
+          property: connectionString
+
+  # 前端 Static Site
+  - type: web
+    name: uv-frontend
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false  # 部署后需要设置为后端的 URL

@@ -52,15 +52,39 @@ function UVAwareness() {
           count: Number(item.count),
         }));
 
-        const formattedUvData = uvJson.map((item) => ({
-          date: new Date(item.record_date).toLocaleDateString("en-AU", {
-            month: "short",
-            year: "2-digit",
-          }),
-          uv: Number(item.daily_max_uv),
-          avgUv: Number(item.daily_avg_uv),
-          uvLevel: item.uv_level,
-        }));
+        // Aggregate UV data by month to reduce visual clutter
+        const uvByMonthMap = uvJson.reduce((acc, item) => {
+          const dateObj = new Date(item.record_date);
+          const monthKey = `${dateObj.getFullYear()}-${dateObj.getMonth()}`; // e.g. "2018-0"
+          const dailyMaxUv = Number(item.daily_max_uv);
+          const dailyAvgUv = Number(item.daily_avg_uv);
+
+          if (!acc[monthKey]) {
+            acc[monthKey] = {
+              dateObj,
+              sumMaxUv: 0,
+              sumAvgUv: 0,
+              count: 0,
+            };
+          }
+
+          acc[monthKey].sumMaxUv += dailyMaxUv;
+          acc[monthKey].sumAvgUv += dailyAvgUv;
+          acc[monthKey].count += 1;
+
+          return acc;
+        }, {});
+
+        const formattedUvData = Object.values(uvByMonthMap)
+          .sort((a, b) => a.dateObj - b.dateObj)
+          .map((bucket) => ({
+            date: bucket.dateObj.toLocaleDateString("en-AU", {
+              month: "short",
+              year: "2-digit",
+            }),
+            uv: bucket.sumMaxUv / bucket.count,
+            avgUv: bucket.sumAvgUv / bucket.count,
+          }));
 
         setSkinCancerData(formattedCancerData);
         setUvData(formattedUvData);
@@ -132,7 +156,9 @@ function UVAwareness() {
                     position: "insideLeft",
                   }}
                 />
-                <Tooltip />
+                <Tooltip
+                  labelStyle={{ color: "#f6b44b", fontWeight: 600 }}
+                />
                 <Legend
                   verticalAlign="bottom"
                   align="center"
@@ -193,17 +219,13 @@ function UVAwareness() {
                     name === "uv" ? "Daily Max UV" : name,
                   ]}
                   labelFormatter={(label) => `Date: ${label}`}
-                />
-                <Legend
-                  verticalAlign="bottom"
-                  align="center"
-                  wrapperStyle={{ paddingTop: "25px" }}
+                  labelStyle={{ color: "#f6b44b", fontWeight: 600 }}
                 />
                 <ReferenceLine
                   y={3}
                   stroke="#ff6b6b"
+                  strokeWidth={4}
                   strokeDasharray="6 6"
-                  label="Harmful level (UV 3+)"
                 />
                 <Line
                   type="monotone"
@@ -218,6 +240,40 @@ function UVAwareness() {
             </ResponsiveContainer>
           )}
         </div>
+        {!loading && !error && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "24px",
+              marginTop: "12px",
+              fontSize: "0.9rem",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span
+                style={{
+                  width: "20px",
+                  height: "3px",
+                  backgroundColor: "#f6b44b",
+                  borderRadius: "999px",
+                }}
+              ></span>
+              <span style={{ color: "#f6b44b" }}>Daily Max UV</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span
+                style={{
+                  width: "20px",
+                  height: "3px",
+                  backgroundColor: "#ff6b6b",
+                  borderRadius: "999px",
+                }}
+              ></span>
+              <span style={{ color: "#ff6b6b" }}>Harmful level (UV 3+)</span>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="info-card skin-awareness-section">
