@@ -49,3 +49,48 @@ ul {
   width: auto;
   margin-right: 8px;
 }
+
+/* ===== Buttons ===== */
+
+.primary-btn {
+  background: #f6a04d;
+  color: #1a1a1a;
+
+  padding: 12px 20px;
+  border: none;
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.primary-btn:hover {
+  background: #ffb866;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(246, 160, 77, 0.35);
+}
+
+.secondary-btn {
+  background: transparent;
+  border: 2px solid #f6a04d;
+  color: #f6a04d;
+
+  padding: 12px 20px;
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.secondary-btn:hover {
+  background: #f6a04d;
+  color: #1a1a1a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(246, 160, 77, 0.35);
+}
