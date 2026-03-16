@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import { getCurrentUV } from "../services/api";
 
+function getUVColor(uv) {
+  console.log("UV real value:", uv);
+  if (uv === null || uv === undefined) return "#cccccc";
+
+  if (uv <= 2) return "#7BC47F";      // Low (green)
+  if (uv <= 5) return "#F2C96D";      // Moderate (yellow)
+  if (uv <= 7) return "#F5A742";      // High (orange)
+  if (uv <= 10) return "#F8833A";     // Very High (dark orange)
+  return "#F45164";                   // Extreme (red)
+}
+
 function UVCheck() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -30,7 +41,7 @@ function UVCheck() {
             const response = await getCurrentUV(lat, lon);
 
             setLocationName(response.location || `Current location: ${lat}, ${lon}`);
-            setUvIndex(response.uv_index);
+            setUvIndex(Number(response.uv_index));
             setStatus(response.uv_level);
             setWarning(response.warning_message);
             setTemperature(response.temperature ?? null);
@@ -64,7 +75,14 @@ function UVCheck() {
       </section>
 
       <section className="info-card uv-summary-card">
-        <div className="uv-circle">{loading ? "--" : uvIndex ?? "--"}</div>
+        <div
+          className="uv-circle"
+          style={{
+            backgroundColor: loading ? "#ccc" : getUVColor(uvIndex)
+          }}
+        >
+          {loading ? "--" : uvIndex !== null ? uvIndex.toFixed(1) : "--"}
+        </div>
 
         <div className="uv-summary-text">
           <p className="small-label">Current UV Index</p>

@@ -94,3 +94,23 @@ ul {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(246, 160, 77, 0.35);
 }
+
+/* ===== UV Circle ===== */
+
+.uv-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 42px;
+  font-weight: 700;
+
+  color: #111;
+  margin-right: 20px;
+
+  transition: background-color 0.3s ease;
+}
