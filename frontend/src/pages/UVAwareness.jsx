@@ -43,15 +43,19 @@ function UVAwareness() {
           count: Number(item.count),
         }));
 
-        const formattedUvData = uvJson.map((item) => ({
-          date: new Date(item.record_date).toLocaleDateString("en-AU", {
-            day: "2-digit",
-            month: "short",
-          }),
-          uv: Number(item.daily_max_uv),
-          avgUv: Number(item.daily_avg_uv),
-          uvLevel: item.uv_level,
-        }));
+        const currentYear = new Date().getFullYear();
+
+        const formattedUvData = uvJson
+          .filter((item) => {
+            const itemYear = new Date(item.record_date).getFullYear();
+            return itemYear >= currentYear - 4;
+          })
+          .map((item) => ({
+            date: item.record_date, // 保留原始日期，不要先格式化
+            uv: Number(item.daily_max_uv),
+            avgUv: Number(item.daily_avg_uv),
+            uvLevel: item.uv_level,
+          }));
 
         setSkinCancerData(formattedCancerData);
         setUvData(formattedUvData);
@@ -124,15 +128,44 @@ function UVAwareness() {
             <ResponsiveContainer width="100%" height={320}>
               <LineChart data={uvData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" label={{ value: "Date", position: "insideBottom", offset: -10 }} />
+                <XAxis
+                  dataKey="date"
+                  interval="preserveStartEnd"
+                  minTickGap={50}
+                  tickFormatter={(date) =>
+                    new Date(date).toLocaleDateString("en-AU", {
+                      month: "short",
+                      year: "2-digit",
+                    })
+                  }
+                  label={{ value: "Year / Month", position: "insideBottom", offset: -10 }}
+                />
                 <YAxis label={{ value: "UV Index", angle: -90, position: "insideLeft" }} />
-                <Tooltip 
-                  formatter={(value, name) => [value, name === "uv" ? "Daily Max UV" : name]} 
-                  labelFormatter={(label) => `Date: ${label}`} 
+                <Tooltip
+                  formatter={(value, name) => [value, name === "uv" ? "Daily Max UV" : name]}
+                  labelFormatter={(label) =>
+                    `Date: ${new Date(label).toLocaleDateString("en-AU", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}`
+                  }
                 />
                 <Legend />
-                <ReferenceLine y={3} stroke="#ff6b6b" strokeDasharray="6 6" label="Harmful level (UV 3+)" />
-                <Line type="monotone" dataKey="uv" name="Daily Max UV" stroke="#f6b44b" strokeWidth={3} />
+                <ReferenceLine
+                  y={3}
+                  stroke="#ff6b6b"
+                  strokeDasharray="6 6"
+                  label="Harmful level (UV 3+)"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="uv"
+                  name="Daily Max UV"
+                  stroke="#f6b44b"
+                  strokeWidth={3}
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           )}
