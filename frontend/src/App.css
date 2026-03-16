@@ -664,3 +664,21 @@
   align-items: center;
   justify-content: center;
 }
+
+.hero-helper-text {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: #cfc7bd;
+}
+
+.hero-side-title {
+  margin-top: 14px;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.empty-state-number {
+  opacity: 0.65;
+}
