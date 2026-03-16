@@ -158,7 +158,7 @@ function Home() {
 
           {uvResult ? (
             <>
-              <div className="hero-uv-number">{uvResult.uvIndex}</div>
+              <div className="hero-uv-number">{uvResult.uvIndex != null ? Number(uvResult.uvIndex).toFixed(1) : "--"}</div>
               <SeverityBadge level={uvResult.level} />
               <p className="hero-side-text">{uvResult.warning}</p>
               <p className="small-label">Location: {uvResult.location}</p>
@@ -222,7 +222,7 @@ function Home() {
       {uvResult && !loading && (
         <>
           <section className="info-card uv-summary-card">
-            <div className="home-uv-circle">{uvResult.uvIndex}</div>
+            <div className="home-uv-circle">{uvResult.uvIndex != null ? Number(uvResult.uvIndex).toFixed(1) : "--"}</div>
 
             <div className="uv-summary-text">
               <p className="small-label">Current UV Index</p>
