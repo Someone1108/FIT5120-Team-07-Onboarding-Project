@@ -28,12 +28,21 @@ function UVAwareness() {
         setError("");
 
         const [cancerRes, uvRes] = await Promise.all([
-          fetch("https://fit5120-team-07-onboarding-project.onrender.com/api/cancer/incidence"),
-          fetch("https://fit5120-team-07-onboarding-project.onrender.com/api/uv/trend"),
+          fetch(
+            "https://fit5120-team-07-onboarding-project.onrender.com/api/cancer/incidence"
+          ),
+          fetch(
+            "https://fit5120-team-07-onboarding-project.onrender.com/api/uv/trend"
+          ),
         ]);
 
-        if (!cancerRes.ok) throw new Error(`Cancer API error: ${cancerRes.status}`);
-        if (!uvRes.ok) throw new Error(`UV API error: ${uvRes.status}`);
+        if (!cancerRes.ok) {
+          throw new Error(`Cancer API error: ${cancerRes.status}`);
+        }
+
+        if (!uvRes.ok) {
+          throw new Error(`UV API error: ${uvRes.status}`);
+        }
 
         const cancerJson = await cancerRes.json();
         const uvJson = await uvRes.json();
@@ -43,19 +52,15 @@ function UVAwareness() {
           count: Number(item.count),
         }));
 
-        const currentYear = new Date().getFullYear();
-
-        const formattedUvData = uvJson
-          .filter((item) => {
-            const itemYear = new Date(item.record_date).getFullYear();
-            return itemYear >= currentYear - 4;
-          })
-          .map((item) => ({
-            date: item.record_date, // 保留原始日期，不要先格式化
-            uv: Number(item.daily_max_uv),
-            avgUv: Number(item.daily_avg_uv),
-            uvLevel: item.uv_level,
-          }));
+        const formattedUvData = uvJson.map((item) => ({
+          date: new Date(item.record_date).toLocaleDateString("en-AU", {
+            month: "short",
+            year: "2-digit",
+          }),
+          uv: Number(item.daily_max_uv),
+          avgUv: Number(item.daily_avg_uv),
+          uvLevel: item.uv_level,
+        }));
 
         setSkinCancerData(formattedCancerData);
         setUvData(formattedUvData);
@@ -92,22 +97,52 @@ function UVAwareness() {
       <section className="chart-card">
         <h3>Skin Cancer Impact in Australia</h3>
         <p className="chart-note">
-          This chart shows melanoma cases in Australia over time. Hover over each bar to view the exact value.
+          This chart shows melanoma cases in Australia over time. Hover over
+          each bar to view the exact value.
         </p>
+
         <div className="chart-wrapper">
           {loading ? (
             <div className="chart-placeholder">Loading chart...</div>
           ) : error ? (
-            <div className="chart-placeholder" style={{ color: "red" }}>{error}</div>
+            <div className="chart-placeholder" style={{ color: "red" }}>
+              {error}
+            </div>
           ) : (
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={skinCancerData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+            <ResponsiveContainer width="100%" height={360}>
+              <BarChart
+                data={skinCancerData}
+                margin={{ top: 20, right: 20, left: 20, bottom: 70 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" label={{ value: "Year", position: "insideBottom", offset: -10 }} />
-                <YAxis label={{ value: "Cases", angle: -90, position: "insideLeft" }} />
+                <XAxis
+                  dataKey="year"
+                  tick={{ fontSize: 12 }}
+                  interval={1}
+                  label={{
+                    value: "Year",
+                    position: "insideBottom",
+                    offset: -5,
+                  }}
+                />
+                <YAxis
+                  label={{
+                    value: "Cases",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
                 <Tooltip />
-                <Legend />
-                <Bar dataKey="count" name="Skin Cancer Cases" fill="#f6b44b" />
+                <Legend
+                  verticalAlign="bottom"
+                  align="center"
+                  wrapperStyle={{ paddingTop: "25px" }}
+                />
+                <Bar
+                  dataKey="count"
+                  name="Skin Cancer Cases"
+                  fill="#f6b44b"
+                />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -117,41 +152,53 @@ function UVAwareness() {
       <section className="chart-card">
         <h3>Australian UV Trends Over Time</h3>
         <p className="chart-note">
-          This line graph highlights periods where UV exposure reaches harmful levels (UV index 3 or above).
+          This line graph highlights periods where UV exposure reaches harmful
+          levels (UV index 3 or above).
         </p>
+
         <div className="chart-wrapper">
           {loading ? (
             <div className="chart-placeholder">Loading chart...</div>
           ) : error ? (
-            <div className="chart-placeholder" style={{ color: "red" }}>{error}</div>
+            <div className="chart-placeholder" style={{ color: "red" }}>
+              {error}
+            </div>
           ) : (
-            <ResponsiveContainer width="100%" height={320}>
-              <LineChart data={uvData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+            <ResponsiveContainer width="100%" height={360}>
+              <LineChart
+                data={uvData}
+                margin={{ top: 20, right: 20, left: 20, bottom: 70 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="date"
-                  interval="preserveStartEnd"
-                  minTickGap={50}
-                  tickFormatter={(date) =>
-                    new Date(date).toLocaleDateString("en-AU", {
-                      month: "short",
-                      year: "2-digit",
-                    })
-                  }
-                  label={{ value: "Year / Month", position: "insideBottom", offset: -10 }}
+                  tick={{ fontSize: 12 }}
+                  minTickGap={30}
+                  label={{
+                    value: "Year / Month",
+                    position: "insideBottom",
+                    offset: -5,
+                  }}
                 />
-                <YAxis label={{ value: "UV Index", angle: -90, position: "insideLeft" }} />
+                <YAxis
+                  label={{
+                    value: "UV Index",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
                 <Tooltip
-                  formatter={(value, name) => [value, name === "uv" ? "Daily Max UV" : name]}
-                  labelFormatter={(label) =>
-                    `Date: ${new Date(label).toLocaleDateString("en-AU", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}`
-                  }
+                  formatter={(value, name) => [
+                    value,
+                    name === "uv" ? "Daily Max UV" : name,
+                  ]}
+                  labelFormatter={(label) => `Date: ${label}`}
                 />
-                <Legend />
+                <Legend
+                  verticalAlign="bottom"
+                  align="center"
+                  wrapperStyle={{ paddingTop: "25px" }}
+                />
                 <ReferenceLine
                   y={3}
                   stroke="#ff6b6b"
@@ -165,6 +212,7 @@ function UVAwareness() {
                   stroke="#f6b44b"
                   strokeWidth={3}
                   dot={false}
+                  activeDot={{ r: 5 }}
                 />
               </LineChart>
             </ResponsiveContainer>
