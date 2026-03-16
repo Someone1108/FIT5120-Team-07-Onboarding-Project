@@ -5,11 +5,11 @@ function getUVColor(uv) {
   console.log("UV real value:", uv);
   if (uv === null || uv === undefined) return "#cccccc";
 
-  if (uv <= 2) return "#7BC47F";      // Low (green)
-  if (uv <= 5) return "#F2C96D";      // Moderate (yellow)
-  if (uv <= 7) return "#F5A742";      // High (orange)
-  if (uv <= 10) return "#F8833A";     // Very High (dark orange)
-  return "#F45164";                   // Extreme (red)
+  if (uv <= 2) return "#7BC47F";      // Low
+  if (uv <= 5) return "#F2C96D";      // Moderate
+  if (uv <= 7) return "#F5A742";      // High
+  if (uv <= 10) return "#F8833A";     // Very High
+  return "#F45164";                   // Extreme
 }
 
 function UVCheck() {
@@ -78,7 +78,8 @@ function UVCheck() {
         <div
           className="uv-circle"
           style={{
-            backgroundColor: loading ? "#ccc" : getUVColor(uvIndex)
+            backgroundColor: loading ? "#ccc" : getUVColor(uvIndex),
+            color: "#000",
           }}
         >
           {loading ? "--" : uvIndex !== null ? uvIndex.toFixed(1) : "--"}
