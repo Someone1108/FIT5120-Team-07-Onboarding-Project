@@ -141,6 +141,10 @@ function Home() {
             </Link>
           </div>
 
+          <p className="hero-helper-text">
+            Get a live UV reading based on your current location.
+          </p>
+
           <div className="hero-mini-stats">
             <div className="mini-stat">
               <strong>2 in 3</strong>
@@ -158,7 +162,11 @@ function Home() {
 
           {uvResult ? (
             <>
-              <div className="hero-uv-number">{uvResult.uvIndex != null ? Number(uvResult.uvIndex).toFixed(1) : "--"}</div>
+              <div className="hero-uv-number">
+                {uvResult.uvIndex != null
+                  ? Number(uvResult.uvIndex).toFixed(1)
+                  : "--"}
+              </div>
               <SeverityBadge level={uvResult.level} />
               <p className="hero-side-text">{uvResult.warning}</p>
               <p className="small-label">Location: {uvResult.location}</p>
@@ -171,10 +179,15 @@ function Home() {
             </>
           ) : (
             <>
-              <div className="hero-uv-number">--</div>
-              <span className="hero-badge">Waiting</span>
+              <div className="hero-uv-number empty-state-number">--</div>
+              <span className="hero-badge">Action needed</span>
+              <p className="hero-side-title">No UV result yet</p>
               <p className="hero-side-text">
-                Click the button to check today's UV risk.
+                Click <strong>"Check Today's UV Risk"</strong> to see your live
+                UV level.
+              </p>
+              <p className="small-label">
+                We'll use your current location to fetch today's reading.
               </p>
             </>
           )}
@@ -222,7 +235,11 @@ function Home() {
       {uvResult && !loading && (
         <>
           <section className="info-card uv-summary-card">
-            <div className="home-uv-circle">{uvResult.uvIndex != null ? Number(uvResult.uvIndex).toFixed(1) : "--"}</div>
+            <div className="home-uv-circle">
+              {uvResult.uvIndex != null
+                ? Number(uvResult.uvIndex).toFixed(1)
+                : "--"}
+            </div>
 
             <div className="uv-summary-text">
               <p className="small-label">Current UV Index</p>
