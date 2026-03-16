@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import UVCheck from "./pages/UVCheck";
+import UVCheck from "./pages/UvCheck";
 import UVAwareness from "./pages/UVAwareness";
 import About from "./pages/About";
 import ProtectionTips from "./pages/ProtectionTips";
