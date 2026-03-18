@@ -1,20 +1,20 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import logo from "../assets/logo.PNG";
 
 function Navbar() {
   return (
     <nav className="navbar">
-      {/* <div className="brand">UVGuard</div> */}
-      <Link to="/" className="brand">
+      <NavLink to="/" end className="brand">
         <img src={logo} alt="UVGuard Logo" className="nav-logo" />
         UVGuard
-      </Link>
+      </NavLink>
+
       <div className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/uv-check">UV Check</Link>
-        <Link to="/uv-awareness">UV Awareness</Link>
-        <Link to="/protection-tips">Protection Tips</Link>
-        <Link to="/about">About</Link>
+        <NavLink to="/" end>Home</NavLink>
+        <NavLink to="/uv-check">UV Check</NavLink>
+        <NavLink to="/uv-awareness">UV Awareness</NavLink>
+        <NavLink to="/protection-tips">Sun Safety Tips</NavLink>
+        <NavLink to="/about">About</NavLink>
       </div>
     </nav>
   );

@@ -101,34 +101,36 @@ function UVCheck() {
         </div>
       </section>
 
-      <section className="info-card">
-        <h3>Recommended protection</h3>
-        {actions.length > 0 ? (
-          <ul className="tip-list">
-            {actions.map((action, index) => (
-              <li key={index}>{action}</li>
-            ))}
-          </ul>
-        ) : (
-          <ul className="tip-list">
-            <li>Apply SPF 30+ sunscreen</li>
-            <li>Wear sunglasses and a wide-brim hat</li>
-            <li>Seek shade during midday hours</li>
-            <li>Wear protective clothing if possible</li>
-          </ul>
-        )}
-      </section>
+      <div className="uvcheck-grid">
+        <section className="info-card">
+          <h3>Recommended protection</h3>
+          {actions.length > 0 ? (
+            <ul className="tip-list">
+              {actions.map((action, index) => (
+                <li key={index}>{action}</li>
+              ))}
+            </ul>
+          ) : (
+            <ul className="tip-list">
+              <li>Apply SPF 30+ sunscreen</li>
+              <li>Wear sunglasses and a wide-brim hat</li>
+              <li>Seek shade during midday hours</li>
+              <li>Wear protective clothing if possible</li>
+            </ul>
+          )}
+        </section>
 
-      <section className="info-card">
-        <h3>UV Index Scale</h3>
-        <div className="scale-list">
-          <div className="scale-item low">Low: 0-2</div>
-          <div className="scale-item moderate">Moderate: 3-5</div>
-          <div className="scale-item high">High: 6-7</div>
-          <div className="scale-item very-high">Very High: 8-10</div>
-          <div className="scale-item extreme">Extreme: 11+</div>
-        </div>
-      </section>
+        <section className="info-card">
+          <h3>UV Index Scale</h3>
+          <div className="scale-list">
+            <div className="scale-item low">Low: 0-2</div>
+            <div className="scale-item moderate">Moderate: 3-5</div>
+            <div className="scale-item high">High: 6-7</div>
+            <div className="scale-item very-high">Very High: 8-10</div>
+            <div className="scale-item extreme">Extreme: 11+</div>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

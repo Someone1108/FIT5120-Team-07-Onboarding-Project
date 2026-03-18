@@ -39,15 +39,13 @@ function Home() {
             </div>
             <div className="mini-stat">
               <strong>Stay aware</strong>
-              <span>
-                UV damage can happen even on cool or cloudy days
-              </span>
+              <span>UV damage can happen even on cool or cloudy days</span>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="info-card">
+      <section className="info-card home-top-card">
         <h3>What is UV Radiation?</h3>
         <p>
           Ultraviolet (UV) radiation is a form of electromagnetic radiation that
@@ -64,33 +62,38 @@ function Home() {
         </ul>
       </section>
 
-      <section className="info-card">
-        <h3>Why Sun Protection Matters</h3>
-        <p>
-          Australia has one of the highest skin cancer rates in the world.
-          Excessive UV exposure is one of the biggest preventable causes of skin
-          damage and skin cancer.
-        </p>
+      <div className="home-info-grid">
+        <section className="info-card">
+          <h3>Why Sun Protection Matters</h3>
+          <p>
+            Australia has one of the highest skin cancer rates in the world.
+            Excessive UV exposure is one of the biggest preventable causes of skin
+            damage and skin cancer.
+          </p>
 
-        <div className="highlight-box">
-          <h4>Key points:</h4>
+          <div className="highlight-box">
+            <h4>Key points:</h4>
+            <ul>
+              <li>2 in 3 Australians may develop skin cancer by age 70</li>
+              <li>UV damage can happen even on cool or cloudy days</li>
+              <li>Young adults often underestimate everyday UV risk</li>
+            </ul>
+          </div>
+        </section>
+
+        <section className="info-card">
+          <h3>Sun Safety Tips</h3>
           <ul>
-            <li>2 in 3 Australians may develop skin cancer by age 70</li>
-            <li>UV damage can happen even on cool or cloudy days</li>
-            <li>Young adults often underestimate everyday UV risk</li>
+            <li>Wear SPF 30+ or higher sunscreen and reapply every 2 hours</li>
+            <li>Use sunglasses and a wide-brim hat outdoors</li>
+            <li>Seek shade during peak UV hours</li>
+            <li>Wear protective clothing where possible</li>
+            <li>Check the daily UV index before heading out</li>
+            <li>Carry sunscreen in your bag for uni, work or outings</li>
+            <li>Do not rely on temperature alone UV can still be high on mild days</li>
           </ul>
-        </div>
-      </section>
-
-      <section className="info-card">
-        <h3>Prevention Tips</h3>
-        <ul>
-          <li>Wear SPF 30+ sunscreen</li>
-          <li>Use sunglasses and a wide-brim hat</li>
-          <li>Seek shade during peak UV hours</li>
-          <li>Wear protective clothing where possible</li>
-        </ul>
-      </section>
+        </section>
+      </div>
     </main>
   );
 }

@@ -2,7 +2,7 @@ function ProtectionTips() {
   return (
     <main className="page">
       <section className="page-intro">
-        <h1>Protection Tips</h1>
+        <h1>Sun Safety Tips</h1>
         <p>Simple sun-safe actions based on current UV conditions</p>
       </section>
 
@@ -15,6 +15,20 @@ function ProtectionTips() {
           <div className="mini-card">Seek shade</div>
           <div className="mini-card">Protective clothing</div>
         </div>
+      </section>
+
+      <section className="info-card">
+        <h3>When to be extra careful</h3>
+        <p>
+          UV exposure can rise quickly during everyday outdoor activities in
+          Australia, even when the weather feels mild or cloudy.
+        </p>
+        <ul>
+          <li>Beach trips, pools, and water activities</li>
+          <li>Outdoor sport, walks, and exercise during midday</li>
+          <li>Festivals, events, and long periods outside</li>
+          <li>Cloudy days when UV is still high</li>
+        </ul>
       </section>
 
       <section className="info-card">
