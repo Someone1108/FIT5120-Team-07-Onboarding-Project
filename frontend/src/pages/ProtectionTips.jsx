@@ -18,6 +18,20 @@ function ProtectionTips() {
       </section>
 
       <section className="info-card">
+        <h3>When to be extra careful</h3>
+        <p>
+          UV exposure can rise quickly during everyday outdoor activities in
+          Australia, even when the weather feels mild or cloudy.
+        </p>
+        <ul>
+          <li>Beach trips, pools, and water activities</li>
+          <li>Outdoor sport, walks, and exercise during midday</li>
+          <li>Festivals, events, and long periods outside</li>
+          <li>Cloudy days when UV is still high</li>
+        </ul>
+      </section>
+
+      <section className="info-card">
         <h3>Protection guide by UV level</h3>
         <div className="scale-list">
           <div className="scale-item low">Low: basic protection is usually enough</div>

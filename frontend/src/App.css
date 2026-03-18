@@ -681,3 +681,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+.info-card ul {
+  margin-top: 14px;
+}
+
+.info-card ul li {
+  margin-bottom: 10px;
+  color: #f2e7da;
+}
