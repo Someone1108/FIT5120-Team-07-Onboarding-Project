@@ -112,9 +112,9 @@ function UVAwareness() {
       <section className="info-card">
         <h3>Why UV awareness matters</h3>
         <p>
-          Australia has one of the highest skin cancer rates in the world.
-          Learning about UV trends and skin cancer impact can help users make
-          better decisions about sunscreen, shade, and outdoor activities.
+          This page combines long-term skin cancer and UV trend data to help users
+          understand why sun protection matters in Australia. The charts below show
+          how UV exposure remains a serious public health concern over time.
         </p>
       </section>
 

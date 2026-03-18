@@ -1,123 +1,9 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import LoadingState from "../components/LoadingState";
-import ErrorState from "../components/ErrorState";
-import ActionChecklist from "../components/ActionChecklist";
-import SeverityBadge from "../components/SeverityBadge";
-import { getCurrentUV, getLocations, getLocationByName } from "../services/api";
-import { getUVSeverity } from "../utils/uvHelpers";
 
 function Home() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [permissionDenied, setPermissionDenied] = useState(false);
-  const [manualLocation, setManualLocation] = useState("");
-  const [availableLocations, setAvailableLocations] = useState([]);
-  const [uvResult, setUvResult] = useState(null);
-
-  useEffect(() => {
-    async function loadLocations() {
-      try {
-        const locationData = await getLocations();
-        setAvailableLocations(locationData);
-      } catch (err) {
-        console.error("Could not load locations", err);
-      }
-    }
-
-    loadLocations();
-  }, []);
-
-  async function handleCheckUv() {
-    setLoading(true);
-    setError("");
-    setPermissionDenied(false);
-
-    if (!navigator.geolocation) {
-      setLoading(false);
-      setError("Geolocation is not supported on this device.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const lat = position.coords.latitude.toFixed(6);
-          const lon = position.coords.longitude.toFixed(6);
-
-          const response = await getCurrentUV(lat, lon);
-
-          const uvValue = Number(response.uv_index);
-          const severity = response.uv_level || getUVSeverity(uvValue);
-
-          setUvResult({
-            uvIndex: uvValue,
-            level: severity,
-            location: response.location || `Near ${lat}, ${lon}`,
-            updatedAt: response.updated_at || "",
-            warning: response.warning_message || "",
-            actions: response.actions || [],
-            temperature: response.temperature ?? null
-          });
-        } catch (err) {
-          console.error(err);
-          setError("Could not fetch UV information for your location.");
-        } finally {
-          setLoading(false);
-        }
-      },
-      () => {
-        setLoading(false);
-        setPermissionDenied(true);
-        setError("Location access was denied. Please choose a suburb manually.");
-      }
-    );
-  }
-
-  async function handleManualSearch() {
-    if (!manualLocation.trim()) {
-      setError("Please enter or select a suburb.");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const selectedLocation = await getLocationByName(manualLocation);
-
-      const response = await getCurrentUV(
-        selectedLocation.latitude,
-        selectedLocation.longitude
-      );
-
-      const uvValue = Number(response.uv_index);
-      const severity = response.uv_level || getUVSeverity(uvValue);
-
-      setUvResult({
-        uvIndex: uvValue,
-        level: severity,
-        location:
-          response.location ||
-          `${selectedLocation.suburb}, ${selectedLocation.state}`,
-        updatedAt: response.updated_at || "",
-        warning: response.warning_message || "",
-        actions: response.actions || [],
-        temperature: response.temperature ?? null
-      });
-
-      setPermissionDenied(false);
-    } catch (err) {
-      console.error(err);
-      setError("Could not find that location. Please try another suburb.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <main className="page">
-      <section className="hero-layout">
+      <section className="hero-layout home-single-column">
         <div className="hero-card">
           <p className="eyebrow">UV tracking and protection</p>
           <h1>
@@ -132,9 +18,9 @@ function Home() {
           </p>
 
           <div className="hero-actions">
-            <button className="primary-btn" onClick={handleCheckUv}>
+            <Link to="/uv-check" className="primary-btn">
               Check Today's UV Risk
-            </button>
+            </Link>
 
             <Link to="/uv-awareness" className="secondary-btn">
               Explore UV Awareness
@@ -142,7 +28,8 @@ function Home() {
           </div>
 
           <p className="hero-helper-text">
-            Get a live UV reading based on your current location.
+            Check live UV levels on the UV Check page and explore key sun safety
+            facts here.
           </p>
 
           <div className="hero-mini-stats">
@@ -151,113 +38,59 @@ function Home() {
               <span>Australians may develop skin cancer by age 70</span>
             </div>
             <div className="mini-stat">
-              <strong>Real-time</strong>
-              <span>UV alerts based on your location or suburb selection</span>
+              <strong>Stay aware</strong>
+              <span>
+                UV damage can happen even on cool or cloudy days
+              </span>
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="hero-side-card">
-          <p className="small-label">Current UV level</p>
+      <section className="info-card">
+        <h3>What is UV Radiation?</h3>
+        <p>
+          Ultraviolet (UV) radiation is a form of electromagnetic radiation that
+          comes from the sun. While some UV exposure can help the body produce
+          vitamin D, too much of it can be harmful.
+        </p>
+        <ul>
+          <li>UVA: penetrates deeper into the skin and contributes to ageing</li>
+          <li>UVB: causes sunburn and plays a major role in skin damage</li>
+          <li>
+            UVC: is blocked by the atmosphere and does not reach the earth's
+            surface
+          </li>
+        </ul>
+      </section>
 
-          {uvResult ? (
-            <>
-              <div className="hero-uv-number">
-                {uvResult.uvIndex != null
-                  ? Number(uvResult.uvIndex).toFixed(1)
-                  : "--"}
-              </div>
-              <SeverityBadge level={uvResult.level} />
-              <p className="hero-side-text">{uvResult.warning}</p>
-              <p className="small-label">Location: {uvResult.location}</p>
-              {uvResult.temperature !== null && (
-                <p className="small-label">
-                  Temperature: {uvResult.temperature}°C
-                </p>
-              )}
-              <p className="small-label">Updated: {uvResult.updatedAt}</p>
-            </>
-          ) : (
-            <>
-              <div className="hero-uv-number empty-state-number">--</div>
-              <span className="hero-badge">Action needed</span>
-              <p className="hero-side-title">No UV result yet</p>
-              <p className="hero-side-text">
-                Click <strong>"Check Today's UV Risk"</strong> to see your live
-                UV level.
-              </p>
-              <p className="small-label">
-                We'll use your current location to fetch today's reading.
-              </p>
-            </>
-          )}
+      <section className="info-card">
+        <h3>Why Sun Protection Matters</h3>
+        <p>
+          Australia has one of the highest skin cancer rates in the world.
+          Excessive UV exposure is one of the biggest preventable causes of skin
+          damage and skin cancer.
+        </p>
+
+        <div className="highlight-box">
+          <h4>Key points:</h4>
+          <ul>
+            <li>2 in 3 Australians may develop skin cancer by age 70</li>
+            <li>UV damage can happen even on cool or cloudy days</li>
+            <li>Young adults often underestimate everyday UV risk</li>
+          </ul>
         </div>
       </section>
 
-      {loading && <LoadingState message="Fetching UV data..." />}
-
-      {error && !loading && (
-        <ErrorState message={error} onRetry={handleCheckUv} />
-      )}
-
-      {permissionDenied && (
-        <section className="info-card manual-location-card">
-          <h3>Choose your suburb manually</h3>
-          <p>
-            Location access was denied. Enter or select a suburb to view UV
-            information.
-          </p>
-
-          <input
-            type="text"
-            className="location-input"
-            placeholder="Enter suburb name"
-            value={manualLocation}
-            onChange={(e) => setManualLocation(e.target.value)}
-            list="location-options"
-          />
-
-          <datalist id="location-options">
-            {availableLocations.slice(0, 100).map((item, index) => (
-              <option
-                key={index}
-                value={item.suburb}
-              >{`${item.suburb}, ${item.state}`}</option>
-            ))}
-          </datalist>
-
-          <button className="primary-btn" onClick={handleManualSearch}>
-            Search UV for this location
-          </button>
-        </section>
-      )}
-
-      {uvResult && !loading && (
-        <>
-          <section className="info-card uv-summary-card">
-            <div className="home-uv-circle">
-              {uvResult.uvIndex != null
-                ? Number(uvResult.uvIndex).toFixed(1)
-                : "--"}
-            </div>
-
-            <div className="uv-summary-text">
-              <p className="small-label">Current UV Index</p>
-              <h2>{uvResult.level}</h2>
-              <p>{uvResult.warning}</p>
-              <p className="small-label">Location: {uvResult.location}</p>
-              {uvResult.temperature !== null && (
-                <p className="small-label">
-                  Temperature: {uvResult.temperature}°C
-                </p>
-              )}
-              <p className="small-label">Updated: {uvResult.updatedAt}</p>
-            </div>
-          </section>
-
-          <ActionChecklist actions={uvResult.actions} />
-        </>
-      )}
+      <section className="info-card">
+        <h3>Prevention Tips</h3>
+        <ul>
+          <li>Wear SPF 30+ sunscreen</li>
+          <li>Use sunglasses and a wide-brim hat</li>
+          <li>Seek shade during peak UV hours</li>
+          <li>Wear protective clothing where possible</li>
+        </ul>
+      </section>
     </main>
   );
 }
