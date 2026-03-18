@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { getCurrentUV } from "../services/api";
 
 function getUVColor(uv) {
-  console.log("UV real value:", uv);
   if (uv === null || uv === undefined) return "#cccccc";
 
-  if (uv <= 2) return "#7BC47F";      // Low
-  if (uv <= 5) return "#F2C96D";      // Moderate
-  if (uv <= 7) return "#F5A742";      // High
-  if (uv <= 10) return "#F8833A";     // Very High
-  return "#F45164";                   // Extreme
+  if (uv <= 2) return "#7BC47F";
+  if (uv <= 5) return "#F2C96D";
+  if (uv <= 7) return "#F5A742";
+  if (uv <= 10) return "#F8833A";
+  return "#F45164";
 }
 
 function UVCheck() {
