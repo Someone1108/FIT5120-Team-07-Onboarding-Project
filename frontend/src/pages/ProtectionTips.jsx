@@ -2,7 +2,7 @@ function ProtectionTips() {
   return (
     <main className="page">
       <section className="page-intro">
-        <h1>Protection Tips</h1>
+        <h1>Sun Safety Tips</h1>
         <p>Simple sun-safe actions based on current UV conditions</p>
       </section>
 
